@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Arka Plan Görseli -->
+    <ImageView
+        android:id="@+id/imgAfetMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/afet_modu_ana_ekrani" />
+
+    <!-- 
+        BUTONLAR: Yukarıdan aşağıya (Top-Down) ve orantılı yerleşim.
+        Bu yapı her ekran boyutunda kutucukların üzerine tam oturur.
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="45dp">
+
+        <!-- 1. Enkaz Altındayım -->
+        <View
+            android:id="@+id/btnEnkaz"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:layout_marginBottom="25dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="10dp" />
+
+        <!-- 2. Yaralıyım -->
+        <View
+            android:id="@+id/btnYarali"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:layout_marginBottom="25dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="10dp" />
+
+        <!-- 3. Güvendeyim -->
+        <View
+            android:id="@+id/btnGuvendeyim"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="10dp" />
+
+    </LinearLayout>
+
+    <!-- Alt Navigasyon (En Üst Katman) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:elevation="11dp">
+        <View android:id="@+id/navMessage" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+        <View android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+        <View android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+    </LinearLayout>
+
+</RelativeLayout>

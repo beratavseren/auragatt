@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingHorizontal="24dp"
+    android:background="@color/black_bg">
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/auramesh_logo"
+        android:contentDescription="AuraMesh Logo"
+        android:layout_marginTop="170dp" />
+
+    <org.example.auramesh.GradientTextView
+        android:id="@+id/txtAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AuraMesh"
+        android:textSize="30sp"
+        android:fontFamily="@font/wallpoet_regular"
+        android:layout_marginTop="22dp" />
+
+    <TextView
+        android:id="@+id/btnStart"
+        android:layout_width="260dp"
+        android:layout_height="57dp"
+        android:text="BAŞLA"
+        android:textColor="@color/white"
+        android:textSize="21sp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:fontFamily="@font/nova_flat_regular"
+        android:background="@drawable/button_green"
+        android:layout_marginTop="48dp" />
+
+</LinearLayout>

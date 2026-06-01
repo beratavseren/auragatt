@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">AuraMesh</string>
+    <string name="bluetooth_scan_title">Bluetooth Cihazları</string>
+    <string name="btn_start_scan">Taramayı Başlat</string>
+    <string name="btn_stop_scan">Taramayı Durdur</string>
+    <string name="scan_status_ready">Tarama durumu: Hazır</string>
+    <string name="scan_status_scanning">Tarama durumu: Taranıyor...</string>
+    <string name="scan_status_finished">Tarama durumu: Tamamlandı</string>
+    <string name="scan_status_stopped">Tarama durumu: Durduruldu</string>
+    <string name="scan_status_bluetooth_off">Tarama durumu: Bluetooth kapalı</string>
+    <string name="scan_status_error">Tarama durumu: Hata - %s</string>
+    <string name="device_count">Bulunan cihazlar: %d</string>
+    <string name="bluetooth_disabled">Lütfen Bluetooth\'u açınız</string>
+    <string name="scan_completed">Tarama tamamlandı</string>
+    <string name="permissions_granted">İzinler verildi</string>
+    <string name="permissions_denied">İzinler reddedildi</string>
+    <string name="error_format">Hata: %s</string>
+</resources>

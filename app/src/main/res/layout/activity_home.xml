@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/homeRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_bg">
+
+    <ImageView
+        android:id="@+id/topBarImage"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/top_bar_home"
+        android:scaleType="fitXY"
+        android:contentDescription="Top Bar" />
+
+    <LinearLayout
+        android:id="@+id/topBarClickLayer"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="18dp"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent">
+
+        <FrameLayout android:id="@+id/topLogoArea" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+        <FrameLayout android:id="@+id/topBatteryArea" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+        <FrameLayout android:id="@+id/topProfileArea" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btnSos"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_gravity="center"
+        android:src="@drawable/sos_button"
+        android:contentDescription="Afet Modu Başlat" />
+
+    <TextView
+        android:id="@+id/txtSosInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Afet Modunu Aktifleştirmek İçin\n3 Saniye Basılı Tutun"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="130dp"
+        android:fontFamily="@font/nova_flat_regular" />
+
+    <ImageView
+        android:id="@+id/bottomNavImage"
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:layout_gravity="bottom"
+        android:src="@drawable/bottom_nav_home"
+        android:scaleType="fitXY" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+        <FrameLayout android:id="@+id/navMessage" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+        <FrameLayout android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+        <FrameLayout android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+    </LinearLayout>
+
+</FrameLayout>

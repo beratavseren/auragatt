@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_profile_input"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:animateLayoutChanges="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp">
+
+        <!-- SOL: Toggle Alanı (Geniş Tıklama Hedefi) -->
+        <FrameLayout
+            android:id="@+id/customToggle"
+            android:layout_width="74dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <FrameLayout
+                android:id="@+id/toggleContainer"
+                android:layout_width="48dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_toggle_off"
+                android:clickable="false">
+
+                <View
+                    android:id="@+id/toggleCircle"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="3dp"
+                    android:background="@drawable/bg_toggle_circle" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <!-- ORTA: Başlık -->
+        <TextView
+            android:id="@+id/txtPermissionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/customToggle"
+            android:layout_toStartOf="@id/arrowArea"
+            android:fontFamily="@font/nova_flat_regular"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+
+        <!-- SAĞ: Ok Alanı (Geniş Tıklama Hedefi) -->
+        <FrameLayout
+            android:id="@+id/arrowArea"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/arrowIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_down"
+                android:tint="#FFFFFF" />
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <!-- ALT: Açıklama (Sadece oka basınca açılır) -->
+    <TextView
+        android:id="@+id/txtPermissionDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/nova_flat_regular"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="16dp"
+        android:lineSpacingExtra="4dp"
+        android:textColor="#98A2B3"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</LinearLayout>

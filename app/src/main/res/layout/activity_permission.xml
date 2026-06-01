@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="60dp"
+    android:paddingBottom="120dp"> <!-- Butonları daha yukarı almak için alt boşluk 120dp yapıldı -->
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/nova_flat_regular"
+        android:text="Uygulama İzinleri"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/nova_flat_regular"
+        android:gravity="center"
+        android:lineSpacingExtra="6dp"
+        android:text="Uygulamayı verimli bir şekilde\nkullanabilmek için aşağıdaki\nizinleri vermelisiniz"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="10dp">
+
+            <include android:id="@+id/itemLocation" layout="@layout/item_permission_accordion" />
+            <include android:id="@+id/itemNotification" layout="@layout/item_permission_accordion" />
+            <include android:id="@+id/itemBattery" layout="@layout/item_permission_accordion" />
+            <include android:id="@+id/itemAll" layout="@layout/item_permission_accordion" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginEnd="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_red"
+            android:fontFamily="@font/nova_flat_regular"
+            android:gravity="center"
+            android:text="İptal Et"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/btnContinue"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_green"
+            android:fontFamily="@font/nova_flat_regular"
+            android:gravity="center"
+            android:text="Devam Et"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>
