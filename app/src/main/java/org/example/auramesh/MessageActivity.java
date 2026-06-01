@@ -1,10 +1,12 @@
 package org.example.auramesh;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,17 +38,42 @@ public class MessageActivity extends AppCompatActivity {
     private ImageView btnSendMessage;
     private List<AuraMessage> messageList = new ArrayList<>();
 
+    // Hızlı Mesaj Değişkenleri
+    private LinearLayout layoutQuickActions;
+    private ImageView btnLightning;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- TAM EKRAN (IMMERSIVE MODE) KODLARI ---
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (windowInsetsController != null) {
+            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars());
+            windowInsetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        }
+        // ------------------------------------------
+
         setContentView(R.layout.activity_message);
 
+        // Arayüz Elemanlarını Bağlama
         rvMessages = findViewById(R.id.rvMessages);
         edtMessageInput = findViewById(R.id.edtMessageInput);
         btnSendMessage = findViewById(R.id.btnSendMessage);
+        btnLightning = findViewById(R.id.btnLightning);
+        layoutQuickActions = findViewById(R.id.layoutQuickActions);
 
+        TextView btnQuickEnkaz = findViewById(R.id.btnQuickEnkaz);
+        TextView btnQuickYarali = findViewById(R.id.btnQuickYarali);
+        TextView btnQuickGuven = findViewById(R.id.btnQuickGuven);
+
+        // RecyclerView Ayarları
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MessageAdapter(messageList);
+        adapter = new MessageAdapter(this, messageList);
         rvMessages.setAdapter(adapter);
 
         rvMessages.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
@@ -51,6 +82,7 @@ public class MessageActivity extends AppCompatActivity {
 
         loadMessagesFromDb();
 
+        // Normal Mesaj Gönderme Butonu
         btnSendMessage.setOnClickListener(v -> {
             String text = edtMessageInput.getText().toString().trim();
             if (!text.isEmpty()) {
@@ -59,6 +91,32 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        // --- HIZLI MESAJ İŞLEMLERİ BAŞLANGICI ---
+        btnLightning.setOnClickListener(v -> {
+            if (layoutQuickActions.getVisibility() == View.VISIBLE) {
+                layoutQuickActions.setVisibility(View.GONE);
+            } else {
+                layoutQuickActions.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnQuickEnkaz.setOnClickListener(v -> {
+            sendMessage("Enkaz Altındayım");
+            layoutQuickActions.setVisibility(View.GONE);
+        });
+
+        btnQuickYarali.setOnClickListener(v -> {
+            sendMessage("Yaralıyım");
+            layoutQuickActions.setVisibility(View.GONE);
+        });
+
+        btnQuickGuven.setOnClickListener(v -> {
+            sendMessage("Güvendeyim");
+            layoutQuickActions.setVisibility(View.GONE);
+        });
+        // --- HIZLI MESAJ İŞLEMLERİ BİTİŞİ ---
+
+        // Alt Navigasyon Yönlendirmeleri
         findViewById(R.id.navHome).setOnClickListener(v -> {
             startActivity(new Intent(this, HomeActivity.class));
             finish();
@@ -94,6 +152,7 @@ public class MessageActivity extends AppCompatActivity {
                 AppConstants.DEFAULT_MESSAGE_TTL
         );
         EventBus.getDefault().post(new UserSendMessageEvent(msg));
+
         // Optimistic UI update
         runOnUiThread(() -> {
             messageList.add(msg);

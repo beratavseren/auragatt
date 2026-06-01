@@ -7,7 +7,6 @@
     android:background="@color/black_bg"
     android:fitsSystemWindows="true">
 
-    <!-- Üst Bar -->
     <ImageView
         android:id="@+id/topBarImage"
         android:layout_width="0dp"
@@ -19,7 +18,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Alt Navigasyon Bar -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMessages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/btnLightning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBarImage" />
+
     <RelativeLayout
         android:id="@+id/layoutBottomNav"
         android:layout_width="0dp"
@@ -44,7 +55,6 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <!-- Mesaj Yazma Alanı ve Gönder Butonu Grubu -->
     <RelativeLayout
         android:id="@+id/layoutInputBar"
         android:layout_width="match_parent"
@@ -86,7 +96,6 @@
             android:focusable="true" />
     </RelativeLayout>
 
-    <!-- Şarj Butonu -->
     <ImageView
         android:id="@+id/btnLightning"
         android:layout_width="55dp"
@@ -94,24 +103,67 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="8dp"
         android:clickable="true"
-        android:elevation="5dp"
+        android:elevation="10dp"
         android:focusable="true"
         android:src="@drawable/sarj_image"
         app:layout_constraintBottom_toTopOf="@id/layoutInputBar"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Mesaj Listesi -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMessages"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:paddingHorizontal="16dp"
-        android:clipToPadding="false"
-        android:scrollbars="none"
+    <LinearLayout
+        android:id="@+id/layoutQuickActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="20dp"
+        android:elevation="12dp"
         app:layout_constraintBottom_toTopOf="@id/btnLightning"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topBarImage" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/btnQuickEnkaz"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_quick_action"
+            android:fontFamily="@font/nova_flat_regular"
+            android:gravity="center"
+            android:text="Enkaz Altındayım"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:elevation="6dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btnQuickYarali"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_quick_action"
+            android:fontFamily="@font/nova_flat_regular"
+            android:gravity="center"
+            android:text="Yaralıyım"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:elevation="6dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btnQuickGuven"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_quick_action"
+            android:fontFamily="@font/nova_flat_regular"
+            android:gravity="center"
+            android:text="Güvendeyim"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:elevation="6dp"
+            android:clickable="true"
+            android:focusable="true"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

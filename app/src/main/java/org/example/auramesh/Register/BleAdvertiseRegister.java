@@ -39,7 +39,7 @@ public class BleAdvertiseRegister {
     public void updateDatabaseState(int currentMessageCount, String currentDatabaseHash) {
         this.messageCount = currentMessageCount;
         this.messageHash = currentDatabaseHash;
-        EventBus.getDefault().post(new DatabaseStateUpdatedEvent(currentMessageCount, currentDatabaseHash));
+        EventBus.getDefault().post(new DatabaseStateUpdatedEvent());
     }
 
     public String getMyNodeId(){

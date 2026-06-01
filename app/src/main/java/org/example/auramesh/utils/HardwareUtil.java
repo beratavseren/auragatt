@@ -1,5 +1,7 @@
 package org.example.auramesh.utils;
 
+import android.util.Log;
+
 import org.example.auramesh.Register.NeighborRegister;
 import org.example.auramesh.data.models.NeighborDevice;
 import org.example.auramesh.events.HardwareToRouterEvents.NeighborUpdatedEvent;
@@ -54,6 +56,7 @@ public class HardwareUtil {
         }
 
         if (changed) {
+            Log.d("HardwareUtil", "Neighbor listesi güncellendi.");
             EventBus.getDefault().post(new NeighborUpdatedEvent());
         }
     }

@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutMessageWrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="6dp">
 
-    <TextView
-        android:id="@+id/txtMessageContent"
+    <LinearLayout
+        android:id="@+id/layoutBubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:background="@drawable/bg_profile_input"
-        android:fontFamily="@font/nova_flat_regular"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp"
-        android:text="Mesaj içeriği"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:orientation="vertical"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:id="@+id/txtSenderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nova_flat_regular"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtMessageContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nova_flat_regular"
+            android:text="Mesaj içeriği"
+            android:maxWidth="260dp"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txtMessageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/nova_flat_regular"
+            android:text="00:00"
+            android:textColor="#B3FFFFFF"
+            android:textSize="11sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

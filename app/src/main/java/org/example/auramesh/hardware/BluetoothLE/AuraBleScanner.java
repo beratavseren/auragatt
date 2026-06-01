@@ -9,55 +9,47 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.HandlerThread;
 import android.os.ParcelUuid;
 import android.util.Log;
 
 import org.example.auramesh.data.models.NeighborDevice;
 import org.example.auramesh.utils.AppConstants;
 import org.example.auramesh.utils.HardwareUtil;
-import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressLint("MissingPermission")
-public class AuraBleScanner {
+public class AuraBleScanner{
 
     private static final String TAG = "AuraScanner";
     private static final ParcelUuid AURA_MESH_UUID = AppConstants.AURA_MESH_UUID;
-    private static final long SCAN_SYNC_INTERVAL = 5_000;
-    private static final long WATCHDOG_INTERVAL = 30_000;
-
+    private static final long SCAN_SYNC_INTERVAL = 50000L;
     private final BluetoothLeScanner scanner;
-    private final Handler syncHandler = new Handler(Looper.getMainLooper());
-    private final Handler watchdogHandler = new Handler(Looper.getMainLooper());
+    private final HandlerThread scannerThread;
+    private final Handler syncHandler;
+
     private final Map<String, NeighborDevice> temporaryBuffer = new ConcurrentHashMap<>();
-    private long lastScanResultTime = System.currentTimeMillis();
 
     public AuraBleScanner() {
         this.scanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
-    }
 
-    private final Runnable watchdogRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (System.currentTimeMillis() - lastScanResultTime > WATCHDOG_INTERVAL) {
-                Log.w(TAG, "Watchdog: Tarama donmuş, yeniden başlatılıyor.");
-                stop();
-                start();
-            }
-            watchdogHandler.postDelayed(this, WATCHDOG_INTERVAL);
-        }
-    };
+        // MainLooper YERİNE izole bir iş parçacığı başlatıyoruz
+        scannerThread = new HandlerThread("AuraScannerBackgroundThread");
+        scannerThread.start();
+        this.syncHandler = new Handler(scannerThread.getLooper());
+    }
 
     private final Runnable syncRunnable = new Runnable() {
         @Override
         public void run() {
             if (!temporaryBuffer.isEmpty()) {
+                // Bu işlem artık Ana Thread'i meşgul etmiyor veya Ana Thread tarafından engellenmiyor
                 HardwareUtil.SyncNeighborList(new HashMap<>(temporaryBuffer));
                 temporaryBuffer.clear();
             }
@@ -73,80 +65,82 @@ public class AuraBleScanner {
                 .build();
 
         ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_BALANCED) // LOW_LATENCY yerine BALANCED
-                .setMatchMode(ScanSettings.MATCH_MODE_STICKY) // Sistemin kısıtlamasını azaltır
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build();
 
         scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
-        Log.d(TAG, "BLE Dinleyici başlatıldı.");
+        Log.d(TAG, "BLE Dinleyici bağımsız thread üzerinde başlatıldı.");
 
         syncHandler.post(syncRunnable);
-        watchdogHandler.post(watchdogRunnable);
-        lastScanResultTime = System.currentTimeMillis();
     }
 
     public void stop() {
         if (scanner != null) {
-            try {
-                scanner.stopScan(scanCallback);
-            } catch (Exception e) {
-                Log.e(TAG, "Stop hatası: " + e.getMessage());
-            }
+            scanner.stopScan(scanCallback);
         }
-        syncHandler.removeCallbacks(syncRunnable);
-        watchdogHandler.removeCallbacks(watchdogRunnable);
+        if (syncHandler != null) {
+            syncHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    // Uygulama tamamen kapanırken Thread'i temizlemek için (Memory leak önler)
+    public void destroy() {
+        stop();
+        if (scannerThread != null) {
+            scannerThread.quitSafely();
+        }
     }
 
     private final ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            lastScanResultTime = System.currentTimeMillis(); // Watchdog'u resetle
-
-            if (result.getScanRecord() == null) return;
+            if (result.getScanRecord() == null) {
+                return;
+            }
 
             byte[] payload = result.getScanRecord().getServiceData(AURA_MESH_UUID);
+
             if (payload == null || payload.length < 18) return;
 
             ByteBuffer buffer = ByteBuffer.wrap(payload);
+
             byte[] nodeBytes = new byte[6];
             buffer.get(nodeBytes);
             String targetNodeId = byteArrayToHexString(nodeBytes);
 
             long hashLong = buffer.getLong();
             String targetHash = String.format("%016X", hashLong);
+
             int targetCount = buffer.getInt();
+
+            int rssi = result.getRssi();
+            BluetoothDevice physicalDevice = result.getDevice(); // Soket bağlantısı için kapı kolu
 
             NeighborDevice device = new NeighborDevice(
                     targetNodeId,
-                    result.getRssi(),
+                    rssi,
                     targetCount,
                     targetHash,
-                    result.getDevice()
+                    physicalDevice
             );
 
-            if (!temporaryBuffer.containsKey(targetNodeId) || !device.equals(temporaryBuffer.get(targetNodeId))) {
-                if (!temporaryBuffer.containsKey(targetNodeId))
-                {
-                    Log.d(TAG, "Yeni cihaz bulundu: " + targetNodeId + " mac: " + device.physicalDevice.getAddress() + " RSSI: " + device.rssi);
-                } else {
-                    Log.d(TAG, "Cihaz güncellendi: " + targetNodeId + " mac: " + device.physicalDevice.getAddress() + " RSSI: " + device.rssi);
+            // ConcurrentHashMap olduğu için arka plan thread'i ile güvenle çalışır
+            if (!temporaryBuffer.containsKey(targetNodeId) || !Objects.requireNonNull(temporaryBuffer.get(targetNodeId)).messageHash.equals(targetHash) || Objects.requireNonNull(temporaryBuffer.get(targetNodeId)).messageCount != targetCount || !Objects.requireNonNull(temporaryBuffer.get(targetNodeId)).physicalDevice.getAddress().equals(physicalDevice.getAddress())) {
+                if (temporaryBuffer.containsKey(targetNodeId)) {
+                    Log.d(TAG, "Güncellenen cihaz: " + targetNodeId + " mac: " + physicalDevice.getAddress() + " Count: " + targetCount + " Hash: " + targetHash);
+                }else {
+                    Log.d(TAG, "Yeni cihaz: " + targetNodeId + " mac: " + physicalDevice.getAddress() + " Count: " + targetCount + " Hash: " + targetHash);
                 }
                 temporaryBuffer.put(targetNodeId, device);
             }
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            super.onScanFailed(errorCode);
-            Log.e(TAG, "Tarama başarısız oldu, kod: " + errorCode);
-            syncHandler.postDelayed(() -> start(), 5000);
         }
     };
 
     private String byteArrayToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (byte b : bytes) sb.append(String.format("%02X", b));
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
         return sb.toString();
     }
 }

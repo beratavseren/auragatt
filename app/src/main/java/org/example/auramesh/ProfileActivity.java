@@ -10,6 +10,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+// Yeni eklenen tam ekran importları
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "AuraMeshPrefs";
@@ -25,6 +30,19 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- TAM EKRAN (IMMERSIVE MODE) KODLARI ---
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (windowInsetsController != null) {
+            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars());
+            windowInsetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        }
+        // ------------------------------------------
+
         setContentView(R.layout.activity_profile);
 
         edtFullName = findViewById(R.id.edtFullName);
@@ -59,12 +77,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void saveProfile() {
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
-            .putString("profile_name", edtFullName.getText().toString().trim())
-            .putString("profile_chronic", edtChronic.getText().toString().trim())
-            .putString("profile_medicine", edtMedicine.getText().toString().trim())
-            .putString("profile_allergy", edtAllergy.getText().toString().trim())
-            .putString("profile_blood", txtBloodGroup.getText().toString().trim())
-            .apply();
+                .putString("profile_name", edtFullName.getText().toString().trim())
+                .putString("profile_chronic", edtChronic.getText().toString().trim())
+                .putString("profile_medicine", edtMedicine.getText().toString().trim())
+                .putString("profile_allergy", edtAllergy.getText().toString().trim())
+                .putString("profile_blood", txtBloodGroup.getText().toString().trim())
+                .apply();
     }
 
     private void showBloodGroupDialog() {

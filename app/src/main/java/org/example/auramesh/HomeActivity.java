@@ -8,6 +8,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+// Yeni eklenen importlar
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 public class HomeActivity extends AppCompatActivity {
 
     private Handler handler = new Handler();
@@ -16,6 +21,26 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- TAM EKRAN (IMMERSIVE MODE) KODLARI BAŞLANGICI ---
+        // Pencerenin sistem çubuklarının altına kadar uzanmasını sağlar
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        if (windowInsetsController != null) {
+            // Sadece alt navigasyon çubuğunu gizlemek istersen: WindowInsetsCompat.Type.navigationBars()
+            // Hem üst durum çubuğunu hem alt çubuğu gizlemek istersen: WindowInsetsCompat.Type.systemBars()
+            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars());
+
+            // Kullanıcı ekranın altından yukarı kaydırdığında çubuğun geçici olarak görünmesini sağlar
+            windowInsetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        }
+        // --- TAM EKRAN (IMMERSIVE MODE) KODLARI BİTİŞİ ---
+
         setContentView(R.layout.activity_home);
 
         ImageView btnSos = findViewById(R.id.btnSos);
@@ -30,15 +55,15 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.topProfileArea).setOnClickListener(v ->
-            startActivity(new Intent(this, ProfileActivity.class)));
+                startActivity(new Intent(this, ProfileActivity.class)));
 
         findViewById(R.id.topBatteryArea).setOnClickListener(v ->
-            Toast.makeText(this, "Ağ Durumu: Aktif", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, "Ağ Durumu: Aktif", Toast.LENGTH_SHORT).show());
 
         findViewById(R.id.navMessage).setOnClickListener(v ->
-            startActivity(new Intent(this, MessageActivity.class)));
+                startActivity(new Intent(this, MessageActivity.class)));
 
         findViewById(R.id.navProfile).setOnClickListener(v ->
-            startActivity(new Intent(this, ProfileActivity.class)));
+                startActivity(new Intent(this, ProfileActivity.class)));
     }
 }

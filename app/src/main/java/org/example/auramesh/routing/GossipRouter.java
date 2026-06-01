@@ -294,23 +294,18 @@ public class GossipRouter {
         EventBus.getDefault().post(new NewMessagesSavedToDatabaseEvent(List.of(event.auraMessage)));
 
         Log.d(TAG, "[onUserSendMessageEvent] Mevcut Durum: " + currentState + ". Eğer IDLE ise komşular kontrol edilecek.");
-        if (currentState == RouterState.IDLE) {
-            checkPendingNeighborsAndAct();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onDatabaseStateUpdated(DatabaseStateUpdatedEvent event) {
         Log.d(TAG, "[onDatabaseStateUpdated] Veritabanı durumu güncellendi. Mevcut Durum: " + currentState);
-        if (currentState == RouterState.IDLE) {
-            Log.d(TAG, "[onDatabaseStateUpdated] Router IDLE modunda. Komşular saniyesinde kontrol ediliyor.");
-            checkPendingNeighborsAndAct();
-        }
+        if (currentState == RouterState.IDLE) checkPendingNeighborsAndAct();
     }
+
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onNeighborUpdated(NeighborUpdatedEvent event) {
-        // Log.v(TAG, "[onNeighborUpdated] Komşu listesi güncellendi."); // Çok sık tetikleniyorsa bu logu kapalı tutabiliriz, şimdilik sessiz kalsın
+        Log.v(TAG, "[onNeighborUpdated] Komşu listesi güncellendi."); // Çok sık tetikleniyorsa bu logu kapalı tutabiliriz, şimdilik sessiz kalsın
         if (currentState == RouterState.IDLE) checkPendingNeighborsAndAct();
     }
 
