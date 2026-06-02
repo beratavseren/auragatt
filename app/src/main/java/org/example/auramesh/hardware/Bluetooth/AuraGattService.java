@@ -65,7 +65,12 @@ public class AuraGattService {
 
     private final ConcurrentLinkedQueue<TxChunk> txQueue = new ConcurrentLinkedQueue<>();
     private boolean isTxBusy = false;
-    private int currentMtu = 20; // Varsayılan değer, bağlanınca 512 istenecek
+    private int currentMtu = 20; // Varsayılan değer, bağlanınca negotiate edilecek
+
+    // ===== MTU VE CHUNK SINIRLANDIRMASı =====
+    private static final int MAX_CHUNK_SIZE = 256; // Maksimum chunk boyutu
+    private static final int REQUESTED_MTU = 312; // İstenen MTU (256 + 3 header + 53 buffer)
+    private static final int MTU_HEADER_SIZE = 3; // GATT paket başlığı
 
     // --- ÖZEL VERİ SINIFI ---
     private static class TxChunk {
@@ -248,10 +253,26 @@ public class AuraGattService {
     // ==========================================
     private void enqueueData(String data, String completionAction) {
         byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-        int chunkSize = currentMtu - 3; // GATT paket başlığı payı
+
+        // ✅ DÜZELTME: Chunk size'ı MTU ve MAX_CHUNK_SIZE ile sınırla
+        int availableSpace = currentMtu - MTU_HEADER_SIZE;
+        int chunkSize = Math.min(availableSpace, MAX_CHUNK_SIZE);
+
+        // Güvenlik kontrolü: chunk size çok küçük olmamalı
+        if (chunkSize < 10) {
+            Log.w(TAG, "⚠️ MTU çok düşük (" + currentMtu + "), minimum 13 olmalı!");
+            chunkSize = 10; // Fallback
+        }
 
         for (int i = 0; i < bytes.length; i += chunkSize) {
             int length = Math.min(bytes.length - i, chunkSize);
+
+            // ✅ DÜZELTME: Chunk boyutu MTU sınırını aşmıyor mu kontrol et
+            if (length > currentMtu - MTU_HEADER_SIZE) {
+                Log.e(TAG, "❌ HATA: Chunk boyutu (" + length + ") MTU sınırını (" + (currentMtu - MTU_HEADER_SIZE) + ") aşıyor!");
+                length = currentMtu - MTU_HEADER_SIZE;
+            }
+
             byte[] chunk = new byte[length];
             System.arraycopy(bytes, i, chunk, 0, length);
 
@@ -266,6 +287,16 @@ public class AuraGattService {
         if (isTxBusy || txQueue.isEmpty()) return;
 
         TxChunk nextChunk = txQueue.peek();
+
+        // ✅ Null kontrolü ve MTU sınır kontrolü
+        if (nextChunk == null || nextChunk.data.length > currentMtu - MTU_HEADER_SIZE) {
+            if (nextChunk != null) {
+                Log.e(TAG, "❌ KRITIK HATA: Queue'deki chunk (" + nextChunk.data.length +
+                      " byte) MTU sınırını (" + (currentMtu - MTU_HEADER_SIZE) + ") AŞIYOR!");
+            }
+            return; // Bu chunk'ı gönderme, bağlantıyı kapat
+        }
+
         isTxBusy = true;
 
         if (currentRole == Role.CLIENT) {
