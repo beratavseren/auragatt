@@ -9,7 +9,7 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.os.Handler;
-import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
 
@@ -31,7 +31,8 @@ public class AuraBleScanner{
     private static final ParcelUuid AURA_MESH_UUID = AppConstants.AURA_MESH_UUID;
     private static final long SCAN_SYNC_INTERVAL = 50000L;
     private final BluetoothLeScanner scanner;
-    private final HandlerThread scannerThread;
+
+    // Arka plan thread'i silindi, sadece normal Handler var
     private final Handler syncHandler;
 
     private final Map<String, NeighborDevice> temporaryBuffer = new ConcurrentHashMap<>();
@@ -39,17 +40,14 @@ public class AuraBleScanner{
     public AuraBleScanner() {
         this.scanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
 
-        // MainLooper YERİNE izole bir iş parçacığı başlatıyoruz
-        scannerThread = new HandlerThread("AuraScannerBackgroundThread");
-        scannerThread.start();
-        this.syncHandler = new Handler(scannerThread.getLooper());
+        // Eskisi gibi MainLooper'a (Ana Thread) bağlandı
+        this.syncHandler = new Handler(Looper.getMainLooper());
     }
 
     private final Runnable syncRunnable = new Runnable() {
         @Override
         public void run() {
             if (!temporaryBuffer.isEmpty()) {
-                // Bu işlem artık Ana Thread'i meşgul etmiyor veya Ana Thread tarafından engellenmiyor
                 HardwareUtil.SyncNeighborList(new HashMap<>(temporaryBuffer));
                 temporaryBuffer.clear();
             }
@@ -69,7 +67,7 @@ public class AuraBleScanner{
                 .build();
 
         scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
-        Log.d(TAG, "BLE Dinleyici bağımsız thread üzerinde başlatıldı.");
+        Log.d(TAG, "BLE Dinleyici başlatıldı.");
 
         syncHandler.post(syncRunnable);
     }
@@ -83,12 +81,8 @@ public class AuraBleScanner{
         }
     }
 
-    // Uygulama tamamen kapanırken Thread'i temizlemek için (Memory leak önler)
     public void destroy() {
         stop();
-        if (scannerThread != null) {
-            scannerThread.quitSafely();
-        }
     }
 
     private final ScanCallback scanCallback = new ScanCallback() {
@@ -124,7 +118,6 @@ public class AuraBleScanner{
                     physicalDevice
             );
 
-            // ConcurrentHashMap olduğu için arka plan thread'i ile güvenle çalışır
             if (!temporaryBuffer.containsKey(targetNodeId) || !Objects.requireNonNull(temporaryBuffer.get(targetNodeId)).messageHash.equals(targetHash) || Objects.requireNonNull(temporaryBuffer.get(targetNodeId)).messageCount != targetCount || !Objects.requireNonNull(temporaryBuffer.get(targetNodeId)).physicalDevice.getAddress().equals(physicalDevice.getAddress())) {
                 if (temporaryBuffer.containsKey(targetNodeId)) {
                     Log.d(TAG, "Güncellenen cihaz: " + targetNodeId + " mac: " + physicalDevice.getAddress() + " Count: " + targetCount + " Hash: " + targetHash);
@@ -132,6 +125,7 @@ public class AuraBleScanner{
                     Log.d(TAG, "Yeni cihaz: " + targetNodeId + " mac: " + physicalDevice.getAddress() + " Count: " + targetCount + " Hash: " + targetHash);
                 }
                 temporaryBuffer.put(targetNodeId, device);
+                HardwareUtil.SyncNeighborList(new HashMap<>(temporaryBuffer));
             }
         }
     };
