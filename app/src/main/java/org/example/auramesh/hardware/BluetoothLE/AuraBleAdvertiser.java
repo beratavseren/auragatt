@@ -30,13 +30,16 @@ public class AuraBleAdvertiser {
     private final Handler heartbeatHandler = new Handler(Looper.getMainLooper());
     private boolean isAdvertising = false;
 
-    public AuraBleAdvertiser() {
-        this.advertiser = BluetoothAdapter.getDefaultAdapter().getBluetoothLeAdvertiser();
-    }
-
     // Sınıfın en üstüne (isAdvertising değişkeninin yanına) bu iki hafızayı ekle:
     private String lastAdvertisedHash = "";
     private int lastAdvertisedCount = -1;
+
+    // ✅ BluetoothModeManager referansı ekle
+    private final BluetoothModeManager modeManager = BluetoothModeManager.getInstance();
+
+    public AuraBleAdvertiser() {
+        this.advertiser = BluetoothAdapter.getDefaultAdapter().getBluetoothLeAdvertiser();
+    }
 
     private final Runnable heartbeatRunnable = new Runnable() {
         @Override
@@ -62,17 +65,31 @@ public class AuraBleAdvertiser {
     };
 
     public void start() {
-        if (advertiser != null) {
-            heartbeatHandler.post(heartbeatRunnable);
-        }
+        // ✅ ModeManager aracılığıyla başlat - eğer Scanner çalışıyorsa onu durdur
+        modeManager.startAdvertising();
     }
 
     public void stop() {
+        // ✅ ModeManager aracılığıyla durdur - Scanner varsa tekrar başlat
+        modeManager.stopAdvertising();
+    }
+
+    public void _internalStart() {
+        // Bu metod sadece ModeManager tarafından çağrılır
+        if (advertiser != null) {
+            heartbeatHandler.post(heartbeatRunnable);
+            Log.d(TAG, "📡 Advertiser internal başlatıldı");
+        }
+    }
+
+    public void _internalStop() {
+        // Bu metod sadece ModeManager tarafından çağrılır
         heartbeatHandler.removeCallbacksAndMessages(null);
         if (isAdvertising) {
             advertiser.stopAdvertising(advertiseCallback);
             isAdvertising = false;
         }
+        Log.d(TAG, "📡 Advertiser internal durduruldu");
     }
 
     private void restartAdvertising() {

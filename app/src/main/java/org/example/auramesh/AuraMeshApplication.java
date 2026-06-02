@@ -4,6 +4,7 @@ import android.app.Application;
 import org.example.auramesh.hardware.Bluetooth.AuraGattService;
 import org.example.auramesh.hardware.BluetoothLE.AuraBleAdvertiser;
 import org.example.auramesh.hardware.BluetoothLE.AuraBleScanner;
+import org.example.auramesh.hardware.BluetoothLE.BluetoothModeManager;
 import org.example.auramesh.routing.GossipRouter;
 import org.example.auramesh.routing.StateManager;
 
@@ -14,6 +15,9 @@ public class AuraMeshApplication extends Application {
     private AuraBleScanner bleScanner;
     private GossipRouter gossipRouter;
     private StateManager stateManager;
+
+    // ✅ BluetoothModeManager referansı
+    private BluetoothModeManager modeManager;
 
     @Override
     public void onCreate() {
@@ -27,7 +31,12 @@ public class AuraMeshApplication extends Application {
             gossipRouter = new GossipRouter(this);
             bleAdvertiser = new AuraBleAdvertiser();
             bleScanner = new AuraBleScanner();
-            bleAdvertiser.start();
+
+            // ✅ ModeManager'ı al ve Scanner/Advertiser'ı kaydı et
+            modeManager = BluetoothModeManager.getInstance();
+            modeManager.setScannerAndAdvertiser(bleScanner, bleAdvertiser);
+
+            // ✅ Başlangıçta Scanner'ı başlat
             bleScanner.start();
         }
     }
@@ -38,7 +47,8 @@ public class AuraMeshApplication extends Application {
         if (bluetoothService != null) bluetoothService.onDestroy();
         if (gossipRouter != null) gossipRouter.onDestroy();
         if (stateManager != null) stateManager.onDestroy();
-        if (bleAdvertiser != null) bleAdvertiser.stop();
-        if (bleScanner != null) bleScanner.stop();
+
+        // ✅ Her şeyi güvenli bir şekilde durdur
+        if (modeManager != null) modeManager.stopAll();
     }
 }

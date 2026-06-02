@@ -37,6 +37,9 @@ public class AuraBleScanner{
 
     private final Map<String, NeighborDevice> temporaryBuffer = new ConcurrentHashMap<>();
 
+    // ✅ BluetoothModeManager referansı ekle
+    private final BluetoothModeManager modeManager = BluetoothModeManager.getInstance();
+
     public AuraBleScanner() {
         this.scanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
 
@@ -55,6 +58,17 @@ public class AuraBleScanner{
     };
 
     public void start() {
+        // ✅ ModeManager aracılığıyla başlat - eğer Advertiser çalışıyorsa onu durdur
+        modeManager.startScanning();
+    }
+
+    public void stop() {
+        // ✅ ModeManager aracılığıyla durdur - Advertiser varsa tekrar başlat
+        modeManager.stopScanning();
+    }
+
+    public void _internalStart() {
+        // Bu metod sadece ModeManager tarafından çağrılır
         if (scanner == null) return;
 
         ScanFilter filter = new ScanFilter.Builder()
@@ -66,12 +80,13 @@ public class AuraBleScanner{
                 .build();
 
         scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
-        Log.d(TAG, "BLE Dinleyici başlatıldı.");
+        Log.d(TAG, "📡 BLE Dinleyici başlatıldı.");
 
         syncHandler.post(syncRunnable);
     }
 
-    public void stop() {
+    public void _internalStop() {
+        // Bu metod sadece ModeManager tarafından çağrılır
         if (scanner != null) {
             scanner.stopScan(scanCallback);
         }
@@ -80,9 +95,6 @@ public class AuraBleScanner{
         }
     }
 
-    public void destroy() {
-        stop();
-    }
 
     private final ScanCallback scanCallback = new ScanCallback() {
         @Override
