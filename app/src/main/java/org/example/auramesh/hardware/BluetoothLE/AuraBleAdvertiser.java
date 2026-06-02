@@ -52,6 +52,7 @@ public class AuraBleAdvertiser {
 
                 heartbeatHandler.postDelayed(() -> restartAdvertising(), 100);
                 Log.d(TAG, "Hash değişti! Yeni MAC adresi ile yayın güncelleniyor.");
+                Log.d(TAG, "Hash değişti : "+currentHash+" current count : "+currentCount);
             } else {
                 Log.d(TAG, "Değişiklik yok, radyo frekansı bozulmadan yayına devam ediliyor.");
             }
@@ -88,6 +89,12 @@ public class AuraBleAdvertiser {
         if (myNodeId == null) return;
 
         byte[] payload = buildPayload(myNodeId, hashHex, msgCount);
+
+        // ✅ LOGLAMA: Advertise edilen veriyi göster
+        Log.d(TAG, "📡 ADVERTISE EDİLİYOR -> NodeID: " + myNodeId +
+              " | Hash: " + hashHex +
+              " | MessageCount: " + msgCount +
+              " | PayloadSize: " + payload.length + " bytes");
 
         AdvertiseSettings settings = new AdvertiseSettings.Builder()
                 .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)

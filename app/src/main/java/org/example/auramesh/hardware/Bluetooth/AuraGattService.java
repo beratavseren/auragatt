@@ -186,7 +186,7 @@ public class AuraGattService {
     // ==========================================
     // 2. CLIENT (BAĞLANICI) KURULUMU
     // ==========================================
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onConnectWithBluetoothCommand(ConnectWithBluetoothCommandEvent event) {
         if (!isHardwareBusy.compareAndSet(false, true)) {
             EventBus.getDefault().post(new BluetoothConnectionFailedEvent());
@@ -389,12 +389,12 @@ public class AuraGattService {
         enqueueData("SYNC_DONE\n", "MSG_SENT");
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onDisconnectGracefulCommand(DisconnectGracefulCommandEvent event) {
         safeCloseConnection();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onRejectConnectionRequest(RejectConnectionRequestCommandEvent event) {
         if (connectedDevice != null && connectedDevice.equals(event.bluetoothDevice)) {
             silentCloseConnection();
