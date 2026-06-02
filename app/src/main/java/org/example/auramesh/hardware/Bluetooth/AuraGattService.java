@@ -418,6 +418,13 @@ public class AuraGattService {
         isTxBusy = false;
         txQueue.clear();
         rxBuffer.setLength(0);
+        remoteInventoryBuffer.clear();
+        receivedMessagesBuffer.clear();
+
+        // ✅ MTU TEMİZLEMESİ - Varsayılan BLE MTU'ya geri dön
+        currentMtu = 20;
+        Log.d(TAG, "✅ MTU temizlendi: " + currentMtu + " byte'a sıfırlandı");
+
         isHardwareBusy.set(false); // Kilidi açıyoruz, yeni birine hazır!
     }
 
