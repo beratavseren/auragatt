@@ -2,72 +2,94 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#000000"
+    android:fitsSystemWindows="true">
 
-    <!-- Arka Plan Görseli -->
     <ImageView
-        android:id="@+id/imgAfetMain"
+        android:id="@+id/topBarImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginTop="18dp"
         android:scaleType="fitXY"
-        android:src="@drawable/afet_modu_ana_ekrani" />
+        android:src="@drawable/top_nav_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 
-        BUTONLAR: Yukarıdan aşağıya (Top-Down) ve orantılı yerleşim.
-        Bu yapı her ekran boyutunda kutucukların üzerine tam oturur.
-    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginTop="60dp"
         android:orientation="vertical"
         android:paddingHorizontal="45dp">
 
-        <!-- 1. Enkaz Altındayım -->
-        <View
+        <TextView
             android:id="@+id/btnEnkaz"
             android:layout_width="match_parent"
             android:layout_height="85dp"
             android:layout_marginBottom="25dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/selector_btn_red"
+            android:fontFamily="@font/nova_flat_regular"
+            android:text="Enkaz Altındayım"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:elevation="6dp"
             android:clickable="true"
-            android:focusable="true"
-            android:elevation="10dp" />
+            android:focusable="true" />
 
-        <!-- 2. Yaralıyım -->
-        <View
+        <TextView
             android:id="@+id/btnYarali"
             android:layout_width="match_parent"
             android:layout_height="85dp"
             android:layout_marginBottom="25dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/selector_btn_orange"
+            android:fontFamily="@font/nova_flat_regular"
+            android:text="Yaralıyım"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:elevation="6dp"
             android:clickable="true"
-            android:focusable="true"
-            android:elevation="10dp" />
+            android:focusable="true" />
 
-        <!-- 3. Güvendeyim -->
-        <View
+        <TextView
             android:id="@+id/btnGuvendeyim"
             android:layout_width="match_parent"
             android:layout_height="85dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/selector_btn_green"
+            android:fontFamily="@font/nova_flat_regular"
+            android:text="Güvendeyim"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:elevation="6dp"
             android:clickable="true"
-            android:focusable="true"
-            android:elevation="10dp" />
+            android:focusable="true" />
 
     </LinearLayout>
 
-    <!-- Alt Navigasyon (En Üst Katman) -->
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/layoutBottomNav"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:elevation="11dp">
-        <View android:id="@+id/navMessage" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
-        <View android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
-        <View android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
-    </LinearLayout>
+        android:layout_height="105dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/bottom_nav_home" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <FrameLayout android:id="@+id/navMessage" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+            <FrameLayout android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+            <FrameLayout android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" android:focusable="true" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

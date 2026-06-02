@@ -126,6 +126,7 @@ public class MessageActivity extends AppCompatActivity {
             startActivity(new Intent(this, ProfileActivity.class));
             finish();
         });
+
     }
 
     private void loadMessagesFromDb() {

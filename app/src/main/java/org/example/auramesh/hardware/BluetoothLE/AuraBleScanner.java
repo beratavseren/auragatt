@@ -40,7 +40,6 @@ public class AuraBleScanner{
     public AuraBleScanner() {
         this.scanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
 
-        // Eskisi gibi MainLooper'a (Ana Thread) bağlandı
         this.syncHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -63,7 +62,7 @@ public class AuraBleScanner{
                 .build();
 
         ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
                 .build();
 
         scanner.startScan(Collections.singletonList(filter), settings, scanCallback);

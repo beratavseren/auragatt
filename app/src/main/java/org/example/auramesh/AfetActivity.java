@@ -4,6 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+// Tam ekran (Immersive Mode) importları
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import org.example.auramesh.data.models.AuraMessage;
 import org.example.auramesh.events.UiToRouterEvents.UserSendMessageEvent;
 import org.example.auramesh.utils.AppConstants;
@@ -16,6 +22,20 @@ public class AfetActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- TAM EKRAN (IMMERSIVE MODE) KODLARI ---
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        if (windowInsetsController != null) {
+            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars());
+            windowInsetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        }
+        // ------------------------------------------
+
         setContentView(R.layout.activity_afet);
 
         findViewById(R.id.btnEnkaz).setOnClickListener(v -> {
@@ -44,7 +64,7 @@ public class AfetActivity extends AppCompatActivity {
         findViewById(R.id.navMessage).setOnClickListener(v -> goToMessages());
 
         findViewById(R.id.navProfile).setOnClickListener(v ->
-            startActivity(new Intent(this, ProfileActivity.class)));
+                startActivity(new Intent(this, ProfileActivity.class)));
     }
 
     private void sendEmergencyMessage(String text) {

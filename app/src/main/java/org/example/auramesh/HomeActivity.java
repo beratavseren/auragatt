@@ -46,19 +46,23 @@ public class HomeActivity extends AppCompatActivity {
         ImageView btnSos = findViewById(R.id.btnSos);
         btnSos.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                sosRunnable = () -> startActivity(new Intent(HomeActivity.this, AfetActivity.class));
-                handler.postDelayed(sosRunnable, 3000);
+                // Parmak ekrana dokunduğu an görseli "basılı" (pressed) duruma geçiriyoruz
+                v.setPressed(true);
+
+                sosRunnable = () -> {
+                    // Süre dolduğunda ve diğer ekrana geçerken basılı kalmasını engelliyoruz
+                    v.setPressed(false);
+                    startActivity(new Intent(HomeActivity.this, AfetActivity.class));
+                };
+                handler.postDelayed(sosRunnable, 2000); // Süreyi de daha akıcı olması için 1.5 saniyeye (1500) düşürdük
+
             } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                // Parmak ekrandan kalktığında veya kaydığında "basılı" durumunu iptal ediyoruz
+                v.setPressed(false);
                 handler.removeCallbacks(sosRunnable);
             }
             return true;
         });
-
-        findViewById(R.id.topProfileArea).setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
-
-        findViewById(R.id.topBatteryArea).setOnClickListener(v ->
-                Toast.makeText(this, "Ağ Durumu: Aktif", Toast.LENGTH_SHORT).show());
 
         findViewById(R.id.navMessage).setOnClickListener(v ->
                 startActivity(new Intent(this, MessageActivity.class)));

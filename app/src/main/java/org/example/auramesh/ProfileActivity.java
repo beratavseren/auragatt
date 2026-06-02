@@ -73,6 +73,16 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(ProfileActivity.this, HomeActivity.class));
             finish();
         });
+
+        // Alt Navigasyon Yönlendirmeleri
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        });
+        findViewById(R.id.navMessage).setOnClickListener(v -> {
+            startActivity(new Intent(this, MessageActivity.class));
+            finish();
+        });
     }
 
     private void saveProfile() {
